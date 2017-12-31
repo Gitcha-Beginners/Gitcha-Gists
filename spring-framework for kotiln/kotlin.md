@@ -231,13 +231,24 @@ See [kotlin-script-templating](https://github.com/sdeleuze/kotlin-script-templat
 
 This section provides focus on some specific hints and recommendations worth knowing when developing Spring projects in Kotlin.
 
-### 1.8.1. Final by default
+이 세션에서는 코틀린으로 Spring 프로젝트 개발할때, 알아야 추천과 몇몇 특정 힌트들을 제공하는데 치중합니다.
+
+### 1.8.1. Final by default(기본적으로 Final)
 
 By default, [all classes in Kotlin are `final`](https://discuss.kotlinlang.org/t/classes-final-by-default/166). The `open` modifier on a class is the opposite of Java’s `final`: it allows others to inherit from this class. This also applies to member functions, in that they need to be marked as `open` to be overridden.
 
+기본적으로, 모든 클래스는 코틀린에서는 final 이다. `open` 이라는 클래스의 수정자는 자바의 `final` 과 반대된다. 이것은 또한 이것은 멤버 함수들로 적용시키고 ,`open` 으로 오버로딩되는것이 표시되어야 함이 필요로한다.
+
+
 Whilst Kotlin’s JVM-friendly design is generally frictionless with Spring, this specific Kotlin feature can prevent the application from starting, if this fact is not taken in consideration. This is because Spring beans are normally proxied by CGLIB - such as `@Configuration` classes - which need to be inherited at runtime for technical reasons. The workaround was to add an `open` keyword on each class and member functions of Spring beans proxied by CGLIB such as `@Configuration` classes, which can quickly become painful and is against the Kotlin principle of keeping code concise and predictable.
 
+
+코트린의 JVM 친화적인 설계는 일반적으로 스프링과 충돌하지는 않지만, 어떤 고려도 하지 않는다면  이러한 코틀린의 특징은 어플리케이션 구동을 막을수있다. 이런 연유로 Spring beans 들은 보통 CGLIB 의한 프록시화 됩니다.  `@Configuration` 클래스들과 같이 - 이것은 기술적 이유로 런타임시에 상속을 필요로 합니다. 차선책은 `open` 키워드를 각각의 클래스나  `@Configuration` 클래스들와 같이 CGLIB에 의해서 프록시화 된 스프링 beans 들을 멤버 함수들에 추가하는 방법이 있습니다. 이것은 아주 고통스러운 방법이자 코틀린의 코드의 간결성과 예측성을 원칙에  반대하는 것입니다.
+
 Fortunately, Kotlin now provides a [`kotlin-spring`](https://kotlinlang.org/docs/reference/compiler-plugins.html#kotlin-spring-compiler-plugin) plugin, a preconfigured version of `kotlin-allopen` plugin that automatically opens classes and their member functions for types annotated or meta-annotated with one of the following annotations:
+
+운좋게도,다음 어노테이션 중에 하나의 메타어노테이션 된것과 어노테이션 타입에 대해서 클래스들과 멤버 함수들을 자동적으로 open 시키는  `kotlin-allopen` plugin 로 미리 설정된 코틀린은 현재 [`kotlin-spring`] 플러그인을 제공합니다.
+
 
 *   `@Component`
     
@@ -250,7 +261,11 @@ Fortunately, Kotlin now provides a [`kotlin-spring`](https://kotlinlang.org/docs
 
 Meta-annotations support means that types annotated with `@Configuration`, `@Controller`, `@RestController`, `@Service` or `@Repository` are automatically opened since these annotations are meta-annotated with `@Component`.
 
+Meta-annotations 지원은 `@Component` 타입 어노테이션과 같이 메타 어노테이션이 되어지기 때문에  `@Configuration`, `@Controller`, `@RestController`, `@Service` 또는 `@Repository` 는 자동적으로 open 되어진다.
+   
 [start.spring.io](http://start.spring.io/#!language=kotlin) enables it by default, so in practice you will be able to write your Kotlin beans without any additional `open` keyword, like in Java.
+
+[start.spring.io](http://start.spring.io/#!language=kotlin)은 기본적으로 이것이 가능하나, 그래서 실제적으로 우리는 추가적인 `open` 키워드 없이도 자바처럼 코틀린 Bean들을 작성할수 있다.
 
 ### 1.8.2. Using immutable class instances for persistence
 
