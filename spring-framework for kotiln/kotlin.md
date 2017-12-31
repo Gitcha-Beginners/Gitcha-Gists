@@ -314,6 +314,8 @@ Spring Data 는 코틀린의 불변 객체 인스턴스를 지원하고,만약 �
 
 Our recommendation is to try and favor constructor injection with `val` read-only (and non-nullable when possible) [properties](https://kotlinlang.org/docs/reference/properties.html).
 
+우리의 권고는 `val` 과 같은 읽기 전용 속성 생성자 주입으로 할것을 더 선호한다.
+
     @Component
     class YourBean(
     	private val mongoTemplate: MongoTemplate,
@@ -323,6 +325,9 @@ Our recommendation is to try and favor constructor injection with `val` read-onl
 Note
 
 As of Spring Framework 4.3, classes with a single constructor have their parameters automatically autowired, that’s why there is no need for an explicit `@Autowired constructor` in the example shown above.
+
+Spring Framework 4.3에서는 , 하나의 생성자를 가진 모든 클래스들은
+
 
 If one really needs to use field injection, use the `lateinit var` construct, i.e.,
 
