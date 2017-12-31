@@ -267,13 +267,17 @@ Meta-annotations 지원은 `@Component` 타입 어노테이션과 같이 메타 
 
 [start.spring.io](http://start.spring.io/#!language=kotlin)은 기본적으로 이것이 가능하나, 그래서 실제적으로 우리는 추가적인 `open` 키워드 없이도 자바처럼 코틀린 Bean들을 작성할수 있다.
 
-### 1.8.2. Using immutable class instances for persistence
+### 1.8.2. Using immutable class instances for persistence(영속성을 위한 불변 클래스 인스턴스들의 사용)
 
 In Kotlin, it is very convenient and considered best practice to declare read-only properties within the primary constructor, as in the following example:
+
+코틀린에서는, 다음 예시처럼 primary 생성자 내에서 읽기전용 속성들을 선언하는것은 아주 간결하고 , 아주 좋은 방법이다.
 
     class Person(val name: String, val age: Int)
 
 You can optionally add [the `data` keyword](https://kotlinlang.org/docs/reference/data-classes.html) to make the compiler automatically derive the following members from all properties declared in the primary constructor:
+
+우리는 선택적으로 `data` 키워드를 primary 생성자에서 선언된 모든 속성들을 다음과 같은 멤버들을 얻을수 있도록 컴파일 하도록 추가할 수 있다.
 
 *   equals()/hashCode() pair
     
@@ -285,6 +289,7 @@ You can optionally add [the `data` keyword](https://kotlinlang.org/docs/referenc
     
 
 This allows for easy changes to individual properties even if `Person` properties are read-only:
+만약 `Person` 의 속성을 읽기전용으로 한다면 개개의 속성들을 변경을 쉽게 하도록 한다.
 
     data class Person(val name: String, val age: Int)
     
@@ -293,13 +298,19 @@ This allows for easy changes to individual properties even if `Person` propertie
 
 Common persistence technologies such as JPA require a default constructor, preventing this kind of design. Fortunately, there is now a workaround for this ["default constructor hell"](https://stackoverflow.com/questions/32038177/kotlin-with-jpa-default-constructor-hell) since Kotlin provides a [kotlin-jpa](https://kotlinlang.org/docs/reference/compiler-plugins.html#kotlin-jpa-compiler-plugin) plugin which generates synthetic no-arg constructor for classes annotated with JPA annotations.
 
+JPA 같은 공통 영속성 기술들은 기본 생성자를 이러한 종류의 설계를 막기 위해서 필요로한다.운 좋게도, 현재 "기본 생성자 지옥"을 위한 대안이 있습니다. 그 대안인 kotlin-jpa 는 JPA 어노테이션을 가진 모든 클래스의 문법적인 매개변수 없는 생성자를 생성하는 라이브러리이다.
+
 If you need to leverage this kind of mechanism for other persistence technologies, you can configure the [kotlin-noarg](https://kotlinlang.org/docs/reference/compiler-plugins.html#how-to-use-no-arg-plugin) plugin.
+
+만약 당신이 또다른 영속성 기술들의 이러한 메커니즘에 영향을 주는 것이 필요하다면, 당신은 `kotlin-noarg` 플러그인으로 설정가능한다.
 
 Note
 
 As of the Kay release train, Spring Data supports Kotlin immutable class instances and does not require the `kotlin-noarg` plugin if the module leverages Spring Data object mappings (like with MongoDB, Redis, Cassandra, etc).
+Spring Data 는 코틀린의 불변 객체 인스턴스를 지원하고,만약 모듈이 Spring Data 맵핑(MongoDB, Redis, Cassandra 등과 같이 )이라면  `kotlin-noarg` 플러그인을 필요로 하지 않는다.
 
-### 1.8.3. Injecting dependencies
+
+### 1.8.3. Injecting dependencies(의존성 주입하기)
 
 Our recommendation is to try and favor constructor injection with `val` read-only (and non-nullable when possible) [properties](https://kotlinlang.org/docs/reference/properties.html).
 
