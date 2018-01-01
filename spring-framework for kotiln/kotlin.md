@@ -89,9 +89,17 @@ Generic type arguments, varargs and array elements nullability are not supported
 
 Spring Framework supports various Kotlin constructs like instantiating Kotlin classes via primary constructors, immutable classes data binding and function optional parameters with default values.
 
+Spring Framework는  다양한 코틀린 생성자들을 지원한다. 예를들면 primary constructors 통한 코트린 클래스들과 데이터 바인딩을 한 불변 클래스들 그리고 기본 값을 가진  optional parameters 함수.
+
 Kotlin parameter names are recognized via a dedicated `KotlinReflectionParameterNameDiscoverer` which allows finding interface method parameter names without requiring the Java 8 `-parameters` compiler flag enabled during compilation.
 
+코틀린 파라미터는 수정시에 자바 8의 `-parameters` 컴파이러 옵션 활성을 하지 않고도 인터페이스 메서드 파라미터 이름을 찾을수 있도록 만들어진 `KotlinReflectionParameterNameDiscoverer`을 통해서 인식된다.
+
 [Jackson Kotlin module](https://github.com/FasterXML/jackson-module-kotlin) which is required for serializing / deserializing JSON data is automatically registered when found in the classpath and a warning message will be logged if Jackson and Kotlin are detected without the Jackson Kotlin module present.
+
+Json 데이터를 serializing / deserializing 을 필요로 하여 만들어진 
+[Jackson Kotlin module](https://github.com/FasterXML/jackson-module-kotlin)은 자동적으로 등록한다.
+classpath 에서 
 
 ## 1.5. Annotations
 -----------
@@ -326,10 +334,12 @@ Note
 
 As of Spring Framework 4.3, classes with a single constructor have their parameters automatically autowired, that’s why there is no need for an explicit `@Autowired constructor` in the example shown above.
 
-Spring Framework 4.3에서는 , 하나의 생성자를 가진 모든 클래스들은
+Spring Framework 4.3에서는 , 하나의 생성자를 가진 모든 클래스들은 자동적으로 autowired 되고 , 이러 이유로 명시적으로 위에 보는 것과 같이 `@Autowired constructor` 할 필요는 없다. 
 
 
 If one really needs to use field injection, use the `lateinit var` construct, i.e.,
+
+예를들면, 만약 필드 주입을 사용하는 것이 정말 필요하다면 , `lateinit var` 생성자를 구성하라.
 
     @Component
     class YourBean {
@@ -341,13 +351,20 @@ If one really needs to use field injection, use the `lateinit var` construct, i.
     	lateinit var solrClient: SolrClient
     }
 
-### 1.8.4. Injecting configuration properties
+### 1.8.4. Injecting configuration properties(설정 속성들 주입하기)
 
 In Java, one can inject configuration properties using annotations like `@Value("${property}")`, however in Kotlin `$` is a reserved character that is used for [string interpolation](https://kotlinlang.org/docs/reference/idioms.html#string-interpolation).
 
+자바에서는, `@Value("${property}")` 와 같은 어노테이션을 사용하여 설정 속성들을 주입할수 있지만, 코틀린에서 `$`은  [string interpolation] 위해서 사용하는 예약어이다.
+
 Therefore, if one wishes to use the `@Value` annotation in Kotlin, the `$` character will need to be escaped by writing `@Value("\${property}")`.
 
+그러므로 , 만약 `@Value` 어노테이션을 사용하길 원한다면, `$` 문자는 `@Value("\${property}")` 에 쓰이도록 이스케이스 처리되어야 한다.
+
 As an alternative, it is possible to customize the properties placeholder prefix by declaring the following configuration beans:
+
+
+대체적으로, 다음 bean들에서 선선된 속성의 접두어 지정은 커스텀마이징이 가능하다.
 
     @Bean
     fun propertyConfigurer() = PropertySourcesPlaceholderConfigurer().apply {
@@ -355,6 +372,8 @@ As an alternative, it is possible to customize the properties placeholder prefix
     }
 
 Existing code (like Spring Boot actuators or `@LocalServerPort`) that uses the `${…​}` syntax, can be customised with configuration beans, like as follows:
+
+`${…​}` 가 문법이 존재하는 코드 (Spring Boot actuators 또는 @LocalServerPort 처럼)는 다음과 같이 설정 Beans 을 가지고 커스터마이징이 가능하다.
 
     @Bean
     fun kotlinPropertyConfigurer() = PropertySourcesPlaceholderConfigurer().apply {
@@ -369,11 +388,18 @@ Note
 
 If Spring Boot is being used, then [`@ConfigurationProperties`](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-typesafe-configuration-properties) instead of `@Value` annotations can be used, but currently this only works with nullable `var` properties (which is far from ideal) since immutable classes initialized by constructors are not yet supported. See these issues about [`@ConfigurationProperties` binding for immutable POJOs](https://github.com/spring-projects/spring-boot/issues/8762) and [`@ConfigurationProperties` binding on interfaces](https://github.com/spring-projects/spring-boot/issues/1254) for more details.
 
-### 1.8.5. Annotation array attributes
+
+스프링 부트에서 사용하게된다면 ,  `@Value` 어노테이션 대신에 `@ConfigurationProperties` 으로 사용할수 있고 , 생성자에 의해서 초기화 되는 immutable  클래스들은 아직 지원되지 않기 때문에 null 가능한  `var` 속성들을 가지고 현재 동작하고 있다. 이 이슈는 [`@ConfigurationProperties` immutable POJOs를 위한 바인딩](https://github.com/spring-projects/spring-boot/issues/8762) 그리고 [`@ConfigurationProperties` 의 인터페이스 바인딩](https://github.com/spring-projects/spring-boot/issues/1254) 에서 볼수 있다.
+
+### 1.8.5. Annotation array attributes[어노테이션 배열 속성들]
 
 Kotlin annotations are mostly similar to Java ones, but array attributes - which are extensively used in Spring - behave differently. As explained in [Kotlin documentation](https://kotlinlang.org/docs/reference/annotations.html) unlike other attributes, the `value` attribute name can be omitted and when it is an array attribute it is specified as a `vararg` parameter.
 
+코틀린 어노테이션은 주로 자바처럼 유사하기도 하지만 속성은 배열이다. 이것은 
+
 To understand what that means, let’s take `@RequestMapping`, which is one of the most widely used Spring annotations as an example. This Java annotation is declared as:
+
+이것이 무엇을 의미하는지를 이해하지 위해서  스프링 어노테이션으로 널리 사용되는 `@RequestMapping` 을 가지고 예시를 들어보자. 이것은 자바 어노테이션으로 선언되었다: 
 
     public @interface RequestMapping {
     
