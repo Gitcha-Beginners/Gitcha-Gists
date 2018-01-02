@@ -1,7 +1,15 @@
+
+
+### 현재 보시는 문서는 Gitcha 커뮤니티에서 작성된 번역된 문서입니다.
+#### 최초 작성자 : ByeongGiKim
+
+
+
+---
+
+
+
 # 1. Kotlin
-
-======
-
 [Kotlin](https://kotlinlang.org) is a statically-typed language targeting the JVM (and other platforms) which allows writing concise and elegant code while providing very good [interoperability](https://kotlinlang.org/docs/reference/java-interop.html) with existing libraries written in Java.
 
 코틀린은 JVM 및 기타 플랫폼을 목표으로 한 정적 타입 언어이다. 코틀린은 자바로 작성된 라이브러리와 아주 좋은 상호 운용성을 제공하면서도(자바 라이브러리를 호출하여 코틀린에서 사용 가능함) 간결하고 우아한 코드로 작성할수 있는 언어이다.
@@ -11,7 +19,7 @@ The Spring Framework provides first-class support for Kotlin that allows develop
 Spring Framework 가 네이티브 코틀린 프레임워크처럼 개발자가 코트린 어플리케이션으로 작성할수 있도록 first-class 지원을 한다.
 
 ## 1.1. Requirements(필요사항들)
-------------
+---
 
 Spring Framework supports Kotlin 1.1+ and requires [`kotlin-stdlib`](https://bintray.com/bintray/jcenter/org.jetbrains.kotlin%3Akotlin-stdlib) (or one of its [`kotlin-stdlib-jre7`](https://bintray.com/bintray/jcenter/org.jetbrains.kotlin%3Akotlin-stdlib-jre7) / [`kotlin-stdlib-jre8`](https://bintray.com/bintray/jcenter/org.jetbrains.kotlin%3Akotlin-stdlib-jre8) variants) and [`kotlin-reflect`](https://bintray.com/bintray/jcenter/org.jetbrains.kotlin%3Akotlin-reflect) to be present on the classpath. They are provided by default if one bootstraps a Kotlin project on [start.spring.io](https://start.spring.io/#!language=kotlin).
 
@@ -19,7 +27,7 @@ Spring Framework은 Kotlin 1.1 이상을 지원하고, kotlin-stdlib(kotlin-stdl
 
 
 ## 1.2. Extensions[확장]
-----------
+---
 
 Kotlin [extensions](https://kotlinlang.org/docs/reference/extensions.html) provide the ability to extend existing classes with additional functionality. The Spring Framework Kotlin APIs make use of these extensions to add new Kotlin specific conveniences to existing Spring APIs. 
 
@@ -395,11 +403,11 @@ If Spring Boot is being used, then [`@ConfigurationProperties`](https://docs.spr
 
 Kotlin annotations are mostly similar to Java ones, but array attributes - which are extensively used in Spring - behave differently. As explained in [Kotlin documentation](https://kotlinlang.org/docs/reference/annotations.html) unlike other attributes, the `value` attribute name can be omitted and when it is an array attribute it is specified as a `vararg` parameter.
 
-코틀린 어노테이션은 주로 자바처럼 유사하기도 하지만 속성은 배열이다. 이것은 
+코틀린 어노테이션은 주로 자바처럼 유사하기도 하지만 속성은 배열이다. 이것은 스프링에서 확대하여 사용할수 있다. 다른 속성과 같이 않게 코틀린 문서에 설명을 보면, `value` 속성명은 누락될수 있고, 이것이 배별 속성일 때, 이것은 `vararg` 로 특정화된다.
 
 To understand what that means, let’s take `@RequestMapping`, which is one of the most widely used Spring annotations as an example. This Java annotation is declared as:
 
-이것이 무엇을 의미하는지를 이해하지 위해서  스프링 어노테이션으로 널리 사용되는 `@RequestMapping` 을 가지고 예시를 들어보자. 이것은 자바 어노테이션으로 선언되었다: 
+이것이 무엇을 의미하는지를 이해하지 위해서  스프링 어노테이션으로 널리 사용되는 `@RequestMapping` 을 가지고 예시를 들어보자. 이것은 자바 어노테이션으로 선언되었다:
 
     public @interface RequestMapping {
     
@@ -416,17 +424,32 @@ To understand what that means, let’s take `@RequestMapping`, which is one of t
 
 The typical use case for `@RequestMapping` is to map a handler method to a specific path and method. In Java, it is possible to specify a single value for the annotation array attribute and it will be automatically converted to an array.
 
+`@RequestMapping`의 일반적인 사용 케이스는 핸들러 메소드를 특정 Path 나 메소드로 나탄내낟. 자바에서는, 어노테이션 배열을 속성을 하나의 값으로 지정하는것이 가능하고 그리고 이 속성은 자동적으로 배열로 변환된다. 
+
+
 That’s why one can write `@RequestMapping(value = "/foo", method = RequestMethod.GET)` or `@RequestMapping(path = "/foo", method = RequestMethod.GET)`.
+
+이런이유로  `@RequestMapping(value = "/foo", method = RequestMethod.GET)` 또는 `@RequestMapping(path = "/foo", method = RequestMethod.GET)` 로 작성가능하다.
 
 However, in Kotlin, one will have to write `@RequestMapping("/foo", method = arrayOf(RequestMethod.GET))`. The variant using `path` is not recommended as it need to be written `@RequestMapping(path = arrayOf("/foo"), method = arrayOf(RequestMethod.GET))`.
 
+하지만, 코틀린에서는 , 이것은 `@RequestMapping("/foo", method = arrayOf(RequestMethod.GET))`로 작성해야한다. `path` 사용에 상이한 사용은 `@RequestMapping(path = arrayOf("/foo"), method = arrayOf(RequestMethod.GET))` 로 쓰여지는 것은 추천하지 않는다.
+
 A workaround for this specific `method` attribute (the most common one) is to use a shortcut annotation such as `@GetMapping` or `@PostMapping`, etc.
+
+특정 `method` 속성에 축약형 어노테이션 `@GetMapping` 또는 `@PostMapping` 등과 같은 것을 사용하는 것이다.
+
 
 Note
 
 Reminder: If the `@RequestMapping` `method` attribute is not specified, all HTTP methods will be matched, not only the `GET` methods.
 
+기억하라: 만약 `@RequestMapping` `method` 속성이 지정되지 않았다면, 모든 Http methods 알맞은 속성으로 맞추어 질것이지만 ,  `GET` 메소드는 아니다.
+
 Improving the syntax and consistency of Kotlin annotation array attributes is discussed in [this Kotlin language design issue](https://youtrack.jetbrains.com/issue/KT-11235).
+
+코트린 어노테이션 배열 속성 대한 문법적 향상과 간결성의 7+  
+[코트린의 언어의 설계 이슈](https://youtrack.jetbrains.com/issue/KT-11235)에 대해서 언급했다.
 
 ### 1.8.6. Testing
 
